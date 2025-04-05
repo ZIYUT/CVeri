@@ -21,7 +21,7 @@ export default function UploadResume() {
       organization: '',
       title: '',
       time: '',
-      details: '', // Added details field
+      details: '',
     },
   });
   const [loading, setLoading] = useState(false);
@@ -82,37 +82,32 @@ export default function UploadResume() {
         return;
       }
 
-      // Prepare all data in one object for IPFS
       setMessage('Preparing resume data...');
       const combinedData = {
-        address: account, // Include the submitter's address
+        address: account,
         name: resume.name,
         organization: resume.experience.organization,
         title: resume.experience.title,
         time: resume.experience.time,
-        details: resume.experience.details // Added details field (can be empty)
+        details: resume.experience.details
       };
-      
-      // Upload the data to IPFS - just one upload
+
       setMessage('Uploading resume to IPFS...');
       const { ipfsHash: resumeCID } = await PinataService.uploadResumeToIPFS(combinedData);
-      
-      // Generate a hash for the experience data
+
       const expHash = ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(combinedData)));
-      
+
       const currentSigner = await provider.getSigner();
       const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, RESUME_REGISTRY_ABI, currentSigner);
       setContract(contractInstance);
 
-      // First upload the resume CID
       const resumeTx = await contractInstance.uploadResume(resumeCID, { gasLimit: 800000 });
       setMessage('Transaction sent, waiting for confirmation...');
       await resumeTx.wait();
-      
-      // Then store the experience hash and the same CID
+
       try {
         setMessage('Adding experience to blockchain...');
-        
+
         try {
           await contractInstance.callStatic.addExperience(expHash, resumeCID, { gasLimit: 800000 });
         } catch (staticErr) {
@@ -122,16 +117,13 @@ export default function UploadResume() {
         const feeData = await provider.getFeeData();
         const gasPrice = feeData.gasPrice;
 
-        // Use the same CID for both the resume and experience
         const expTx = await contractInstance.addExperience(expHash, resumeCID, {
           gasLimit: 1200000,
           gasPrice: gasPrice
         });
         await expTx.wait();
 
-        // Only include the Experience Hash in the success message
-        setMessage(`Resume submitted successfully!
-            Experience Hash(Share the hash to your organization for certification): ${expHash}`);
+        setMessage(`Resume submitted successfully!\nExperience Hash(Share the hash to your organization for certification): ${expHash}`);
       } catch (err) {
         console.error('Error adding experience:', err);
         setError(err.message || 'Failed to add experience');
@@ -178,7 +170,7 @@ export default function UploadResume() {
   }, []);
 
   return (
-      <div className="relative isolate overflow-hidden">
+      <>
         <div className="absolute left-[-120px] top-20 h-96 w-96 bg-purple-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
         <div className="absolute right-[-120px] bottom-10 h-96 w-96 bg-indigo-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
         <div className="relative z-10 max-w-4xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
@@ -186,7 +178,7 @@ export default function UploadResume() {
             <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent dark:from-blue-300 dark:via-indigo-200 dark:to-purple-200">
               Submit Resume
             </h1>
-            <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+            <p className="mt-2 text-lg">
               Upload and register your professional experience on-chain
             </p>
           </div>
@@ -202,7 +194,7 @@ export default function UploadResume() {
               </div>
           ) : (
               <div className="mb-6 text-center">
-                <p className="text-lg text-gray-700 dark:text-gray-300">
+                <p className="text-lg">
                   Connected: <span className="font-mono text-purple-600">{account}</span>
                 </p>
                 {networkName && <p className="text-sm text-gray-500">Network: {networkName}</p>}
@@ -305,6 +297,6 @@ export default function UploadResume() {
               </form>
           )}
         </div>
-      </div>
+      </>
   );
 }
