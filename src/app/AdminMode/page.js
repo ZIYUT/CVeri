@@ -19,23 +19,30 @@ export default function RegisterCV() {
   const [error, setError] = useState('');
   const [networkName, setNetworkName] = useState('');
   
-  // Verifier management state
-  const [verifierAddress, setVerifierAddress] = useState('');
-  const [verifiers, setVerifiers] = useState([]);
-  const [isLoadingVerifiers, setIsLoadingVerifiers] = useState(false);
+  // Certifier management state
+  const [certifierAddress, setCertifierAddress] = useState('');
+  const [certifierTitle, setCertifierTitle] = useState('');
   
   // Admin management state
   const [adminAddress, setAdminAddress] = useState('');
 
   const switchNetwork = async (chainId) => {
     try {
+      console.log('Switching to network with chainId:', chainId);
+
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId }],
       });
-    } catch (switchError) {
-      if (switchError.code === 4902) {
+
+      console.log('Network switch request sent');
+    } catch (error) {
+      console.error('Error in switchNetwork:', error);
+
+      if (error.code === 4902) {
         try {
+          console.log('Adding network to MetaMask');
+
           await window.ethereum.request({
             method: 'wallet_addEthereumChain',
             params: [
@@ -52,11 +59,19 @@ export default function RegisterCV() {
               },
             ],
           });
+
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId }],
+          });
+
+          console.log('Network added and switched successfully');
         } catch (addError) {
-          setError('Failed to add network to MetaMask');
+          console.error('Error adding network:', addError);
+          setError(`Failed to add network: ${addError.message}`);
         }
       } else {
-        setError('Failed to switch network');
+        setError(`Failed to switch network: ${error.message}`);
       }
     }
   };
@@ -87,10 +102,7 @@ export default function RegisterCV() {
       if (chainId === SUPPORTED_NETWORKS.POLYGON.chainId) {
         setNetworkName(SUPPORTED_NETWORKS.POLYGON.name);
       } else {
-        setError(`Please connect to Polygon Mainnet. Current network: ${network.name}`);
-        const switchButton = document.createElement('button');
-        switchButton.innerText = 'Switch to Polygon';
-        switchButton.onclick = () => switchNetwork(SUPPORTED_NETWORKS.POLYGON.chainId);
+        setError('Please connect to Polygon Mainnet');
         return;
       }
 
@@ -100,10 +112,6 @@ export default function RegisterCV() {
       const isAdmin = await contract.admins(account);
       setIsAdmin(isAdmin);
       
-      if (isAdmin) {
-        fetchVerifiers(contract);
-      }
-      
       setMessage(`Wallet connected: ${account}`);
     } catch (err) {
       console.error('Error connecting wallet:', err);
@@ -111,21 +119,16 @@ export default function RegisterCV() {
     }
   };
 
-  const fetchVerifiers = async (contractInstance) => {
-    try {
-      setIsLoadingVerifiers(true);
-      const verifierAddresses = await contractInstance.getVerifiers();
-      setVerifiers(verifierAddresses);
-    } catch (error) {
-      console.error('Error fetching verifiers:', error);
-    } finally {
-      setIsLoadingVerifiers(false);
+  const addCertifier = async (e) => {
+    if (e) e.preventDefault();
+    
+    if (!certifierAddress) {
+      setError('Please enter a certifier address');
+      return;
     }
-  };
 
-  const addVerifier = async () => {
-    if (!verifierAddress) {
-      setError('Please enter a verifier address');
+    if (!certifierTitle) {
+      setError('Please enter a title for the certifier');
       return;
     }
     
@@ -134,31 +137,33 @@ export default function RegisterCV() {
       setError('');
       setMessage('');
       
-      if (!ethers.isAddress(verifierAddress)) {
+      if (!ethers.isAddress(certifierAddress)) {
         setError('Invalid Ethereum address');
         setLoading(false);
         return;
       }
+
+      setMessage('Adding certifier to blockchain...');
       
-      const tx = await contract.addVerifier(verifierAddress);
-      setMessage('Adding verifier. Please wait for confirmation...');
+      const tx = await contract.addCertifier(certifierAddress, certifierTitle);
+      setMessage('Transaction sent! Waiting for confirmation...');
       
       await tx.wait();
-      setMessage(`Verifier ${verifierAddress} added successfully!`);
-      setVerifierAddress('');
+      setMessage(`Certifier ${certifierAddress} (${certifierTitle}) added successfully!`);
+      setCertifierAddress('');
+      setCertifierTitle('');
       
-      // Refresh verifiers list
-      fetchVerifiers(contract);
     } catch (err) {
-      console.error('Error adding verifier:', err);
-      setError(err.message || 'Failed to add verifier');
+      console.error('Error adding certifier:', err);
+      setError(err.message || 'Failed to add certifier');
     } finally {
       setLoading(false);
     }
   };
 
-  // Add admin function
-  const addAdmin = async () => {
+  const addAdmin = async (e) => {
+    if (e) e.preventDefault();
+    
     if (!adminAddress) {
       setError('Please enter an admin address');
       return;
@@ -175,7 +180,6 @@ export default function RegisterCV() {
         return;
       }
 
-      // Check if the target address is already an admin
       const isAlreadyAdmin = await contract.admins(adminAddress);
       if (isAlreadyAdmin) {
         setError('This address is already an admin!');
@@ -183,10 +187,12 @@ export default function RegisterCV() {
         return;
       }
       
+      setMessage('Adding admin to blockchain...');
+      
       const tx = await contract.addAdmin(adminAddress, { 
-        gasLimit: 200000 // Ensure enough gas
+        gasLimit: 200000
       });
-      setMessage('Adding admin. Please wait for confirmation...');
+      setMessage('Transaction sent! Waiting for confirmation...');
       
       await tx.wait();
       setMessage(`Admin ${adminAddress} added successfully!`);
@@ -200,6 +206,20 @@ export default function RegisterCV() {
   };
 
   useEffect(() => {
+    const checkNetwork = async () => {
+      if (window.ethereum) {
+        const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+
+        if (chainId === SUPPORTED_NETWORKS.POLYGON.chainId) {
+          setNetworkName(SUPPORTED_NETWORKS.POLYGON.name);
+        } else {
+          setError('Please connect to Polygon Mainnet');
+        }
+      }
+    };
+
+    checkNetwork();
+    
     const checkConnection = async () => {
       if (window.ethereum) {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -219,7 +239,6 @@ export default function RegisterCV() {
           setAccount(null);
           setContract(null);
           setIsAdmin(false);
-          setVerifiers([]);
         }
       });
 
@@ -237,86 +256,205 @@ export default function RegisterCV() {
   }, []);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
+    <div className="max-w-5xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold">
+        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-400 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-300 dark:to-indigo-200">
           Resume Verification Admin Panel
         </h1>
+        <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
+          Manage certifiers and administrators for the resume verification system
+        </p>
       </div>
 
       <div className="flex justify-center mb-8">
         {!account ? (
-          <button onClick={connectWallet} className="px-6 py-3 bg-blue-500 text-white rounded-lg">
+          <button
+            onClick={connectWallet}
+            className="px-6 py-3 rounded-lg bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-medium shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition duration-300 ease-in-out focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:outline-none"
+          >
             Connect MetaMask Wallet
           </button>
         ) : (
-          <div>
-            <p>Connected: {account}</p>
-            <p>Network: {networkName}</p>
-            <p>Admin Status: {isAdmin ? 'Admin' : 'Not Admin'}</p>
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 w-full max-w-2xl border border-gray-200 dark:border-gray-700">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-800 dark:text-white">
+                  Wallet Connected
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  Account and network information
+                </p>
+              </div>
+              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                isAdmin ? 
+                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+              }`}>
+                {isAdmin ? 'Admin' : 'Not Admin'}
+              </div>
+            </div>
+            
+            <div className="mt-4">
+              <div className="flex items-center">
+                <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">Address:</span>
+                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm flex-1 overflow-hidden text-ellipsis">{account}</span>
+              </div>
+              
+              {networkName && (
+                <div className="flex items-center mt-2">
+                  <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">Network:</span>
+                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-sm">{networkName}</span>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      {message && <div className="text-green-500 mb-4">{message}</div>}
-      
-      {isAdmin && (
-        <div className="mt-8 border p-6 rounded-lg bg-gray-50">
-          <h2 className="text-2xl font-bold mb-6">Admin Controls</h2>
-          
-          <div className="grid gap-6 mb-8">
-            <div className="p-4 border rounded bg-white">
-              <h3 className="text-xl font-semibold mb-4">Add Verifier</h3>
-              <div className="flex items-center gap-4">
-                <input
-                  type="text"
-                  placeholder="Verifier Address (0x...)"
-                  value={verifierAddress}
-                  onChange={(e) => setVerifierAddress(e.target.value)}
-                  className="flex-1 p-2 border rounded"
-                  disabled={loading}
-                />
-                <button
-                  onClick={addVerifier}
-                  disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-                >
-                  {loading ? 'Processing...' : 'Add Verifier'}
-                </button>
-              </div>
+      {error && (
+        <div className="mb-6 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-r-lg animate-fadeIn">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
             </div>
-            
-            <div className="p-4 border rounded bg-white">
-              <h3 className="text-xl font-semibold mb-4">Add Admin</h3>
-              <div className="flex items-center gap-4">
+            <div className="ml-3">
+              <p className="text-sm text-red-700 dark:text-red-200">{error}</p>
+              {!networkName && (
+                <div className="mt-2">
+                  <button
+                    onClick={() => switchNetwork(SUPPORTED_NETWORKS.POLYGON.chainId)}
+                    className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-sm rounded-md transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500"
+                  >
+                    Switch to Polygon Mainnet
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {message && (
+        <div className="mb-6 bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4 rounded-r-lg animate-fadeIn">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <div className="text-sm text-green-700 dark:text-green-200 whitespace-pre-line">{message}</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {account && isAdmin && (
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+              <h2 className="text-xl font-bold text-white">Add Certifier</h2>
+              <p className="text-blue-100 text-sm">Add a new authorized certifier to the system</p>
+            </div>
+            <form onSubmit={addCertifier} className="p-6">
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Address</label>
                 <input
                   type="text"
-                  placeholder="Admin Address (0x...)"
+                  value={certifierAddress}
+                  onChange={(e) => setCertifierAddress(e.target.value)}
+                  placeholder="0x..."
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 transition duration-150 outline-none text-gray-900 dark:text-gray-100"
+                  required
+                />
+              </div>
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Title/Organization</label>
+                <input
+                  type="text"
+                  value={certifierTitle}
+                  onChange={(e) => setCertifierTitle(e.target.value)}
+                  placeholder="e.g. University of Melbourne"
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-20 transition duration-150 outline-none text-gray-900 dark:text-gray-100"
+                  required
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={loading || !isAdmin}
+                className={`w-full px-4 py-3 rounded-lg font-medium text-center transition duration-150 ${
+                  loading || !isAdmin
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:shadow-lg'
+                }`}
+              >
+                {loading ? 'Processing...' : 'Add Certifier'}
+              </button>
+            </form>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
+            <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4">
+              <h2 className="text-xl font-bold text-white">Add Admin</h2>
+              <p className="text-purple-100 text-sm">Grant administrator privileges to a new address</p>
+            </div>
+            <form onSubmit={addAdmin} className="p-6">
+              <div className="mb-5">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Admin Address</label>
+                <input
+                  type="text"
                   value={adminAddress}
                   onChange={(e) => setAdminAddress(e.target.value)}
-                  className="flex-1 p-2 border rounded"
-                  disabled={loading}
+                  placeholder="0x..."
+                  className="w-full px-4 py-3 rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-600 focus:border-purple-500 focus:ring-2 focus:ring-purple-500 focus:ring-opacity-20 transition duration-150 outline-none text-gray-900 dark:text-gray-100"
+                  required
                 />
-                <button
-                  onClick={addAdmin}
-                  disabled={loading}
-                  className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
-                >
-                  {loading ? 'Processing...' : 'Add Admin'}
-                </button>
+              </div>
+              <button
+                type="submit"
+                disabled={loading || !isAdmin}
+                className={`w-full px-4 py-3 rounded-lg font-medium text-center transition duration-150 ${
+                  loading || !isAdmin
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-purple-600 text-white hover:bg-purple-700 shadow-md hover:shadow-lg'
+                }`}
+              >
+                {loading ? 'Processing...' : 'Add Admin'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {account && !isAdmin && (
+        <div className="mt-8 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-6 rounded-lg animate-fadeIn">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <svg className="h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <div className="ml-4">
+              <h3 className="text-xl font-medium text-yellow-800 dark:text-yellow-300">Admin Access Required</h3>
+              <p className="mt-2 text-yellow-700 dark:text-yellow-200">
+                Only administrators can manage certifiers and add new admins. Please connect with an authorized admin wallet address to access these features.
+              </p>
+              <div className="mt-4">
+                <a href="/" className="text-yellow-800 dark:text-yellow-300 underline hover:text-yellow-900 dark:hover:text-yellow-200 font-medium transition">
+                  Return to Homepage
+                </a>
               </div>
             </div>
           </div>
         </div>
       )}
-      
-      {!isAdmin && account && (
-        <div className="mt-8 border p-6 rounded-lg bg-gray-50">
-          <h2 className="text-2xl font-bold mb-6">Admin Access Required</h2>
-          <p>You need admin privileges to access this panel.</p>
-        </div>
-      )}
+
+      <div className="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm">
+        <p>Resume Verification System • Admin Dashboard</p>
+        <p className="mt-1">Secured by Blockchain Technology</p>
+      </div>
     </div>
   );
 }
