@@ -176,14 +176,7 @@ export default function VerifyResume() {
     }, []);
 
     return (
-        <div className="relative isolate overflow-hidden min-h-screen bg-gradient-to-br">
-
-        {/* Decorative background shapes */}
-            <div className="absolute left-[-120px] top-20 h-96 w-96 bg-purple-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
-            <div className="absolute right-[-120px] bottom-10 h-96 w-96 bg-indigo-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
-
-            {/* Main content */}
-            <div className="relative z-10 max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
+            <div className="max-w-5xl mx-auto px-4 py-10 sm:px-6 lg:px-8">
                 <div className="text-center mb-10">
                     <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-400 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-300 dark:to-indigo-200">
                         Verify Resume
@@ -255,7 +248,7 @@ export default function VerifyResume() {
                         {experienceData && (
                             <div className="mt-8 space-y-6">
                                 <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">Experience Details</h3>
+                                    <h3 className="text-lg font-semibold text-black mb-2">Experience Details</h3>
                                     <div className="bg-gray-900 text-white p-4 rounded border border-gray-700 space-y-1">
                                         {experienceData.organization && <p><strong>Organization:</strong> {experienceData.organization}</p>}
                                         {experienceData.title && <p><strong>Title:</strong> {experienceData.title}</p>}
@@ -268,7 +261,7 @@ export default function VerifyResume() {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-lg font-semibold text-white mb-2">Certifier List</h3>
+                                    <h3 className="text-lg font-semibold text-black mb-2">Certifier List</h3>
                                     {certifiers.length > 0 ? (
                                         <div className="overflow-x-auto rounded border border-gray-700">
                                             <table className="w-full text-sm text-left text-white">
@@ -312,7 +305,6 @@ export default function VerifyResume() {
                     </div>
                 )}
             </div>
-        </div>
     );
 }
 

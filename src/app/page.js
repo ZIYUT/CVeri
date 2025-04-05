@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-      <div className="relative isolate overflow-hidden">
+      <>
         {/* Decorative background shapes */}
         <div className="absolute left-[-120px] top-20 h-96 w-96 bg-purple-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
         <div className="absolute right-[-120px] bottom-10 h-96 w-96 bg-indigo-400 rounded-full opacity-30 blur-3xl animate-pulse z-0"></div>
@@ -40,23 +40,7 @@ export default function Home() {
               </Link>
             </div>
           </section>
-
-          <section className="mt-20 max-w-5xl text-left space-y-6 text-base leading-relaxed px-4 animate-fade-in delay-200">
-            <h2 className="text-3xl font-bold text-center mb-6">
-              Why Resume Verification Matters
-            </h2>
-            <p>
-              In a job market where competition is fierce and resume inflation is widespread, hiring decisions must be informed by reliable data.
-              CVeri leverages blockchain’s immutability and IPFS’s decentralized storage to ensure that every resume entry is provable, tamper-resistant, and owned by its rightful creator.
-            </p>
-            <p>
-              By streamlining the verification process, we reduce friction for HR teams, minimize fraud risk, and create a fairer hiring ecosystem for candidates.
-            </p>
-            <p>
-              Join us in transforming recruitment through trust, transparency, and technology.
-            </p>
-          </section>
         </main>
-      </div>
+      </>
   );
 }
