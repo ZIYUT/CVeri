@@ -153,7 +153,7 @@ export const RESUME_REGISTRY_ABI = [
 export const SUPPORTED_NETWORKS = {
   POLYGON: {
     name: 'Polygon Mainnet',
-    chainId: '0x89', // 137 in decimal
+    chainId: '0x89',
     rpcUrl: 'https://polygon-rpc.com',
     blockExplorer: 'https://polygonscan.com'
   }
