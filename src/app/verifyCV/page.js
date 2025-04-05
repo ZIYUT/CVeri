@@ -106,10 +106,10 @@ export default function VerifyResume() {
             setExperienceData(parsedData);
             setCertifiers(certifierList);
             setCertifierTitles(titleList);
-            setMessage('Experience verified successfully');
+            setMessage('Resume experience found');
         } catch (err) {
             console.error('Error verifying experience:', err);
-            setError(err.message || 'Failed to verify experience');
+            setError(err.message || 'Failed to find the experience');
         } finally {
             setLoading(false);
         }
@@ -257,12 +257,22 @@ export default function VerifyResume() {
                                 <div>
                                     <h3 className="text-lg font-semibold text-white mb-2">Experience Details</h3>
                                     <div className="bg-gray-900 text-white p-4 rounded border border-gray-700 space-y-1">
+                                        {experienceData.name && <p><strong>Name:</strong> {experienceData.name}</p>}
                                         {experienceData.organization && <p><strong>Organization:</strong> {experienceData.organization}</p>}
                                         {experienceData.title && <p><strong>Title:</strong> {experienceData.title}</p>}
                                         {experienceData.time && <p><strong>Time:</strong> {experienceData.time}</p>}
-                                        {experienceData.name && <p><strong>Name:</strong> {experienceData.name}</p>}
-                                        {experienceData.owner && (
-                                            <p className="text-xs text-gray-300"><strong>Owner:</strong> {experienceData.owner}</p>
+                                        {experienceData.details && (
+                                            <div className="mt-2">
+                                                <p><strong>Details:</strong></p>
+                                                <p className="text-gray-300 whitespace-pre-wrap pl-2 border-l-2 border-gray-700">
+                                                    {experienceData.details}
+                                                </p>
+                                            </div>
+                                        )}
+                                        {experienceData.address && (
+                                            <p className="text-xs text-gray-400 mt-3 text-right italic border-t border-gray-700 pt-2">
+                                                Submitted by: {experienceData.address}
+                                            </p>
                                         )}
                                     </div>
                                 </div>

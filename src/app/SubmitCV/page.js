@@ -135,7 +135,7 @@ export default function UploadResume() {
       } catch (err) {
         console.error('Error adding experience:', err);
         setError(err.message || 'Failed to add experience');
-      }z
+      }
     } catch (err) {
       console.error('Error submitting resume:', err);
       setError(err.message || 'Failed to submit resume');
