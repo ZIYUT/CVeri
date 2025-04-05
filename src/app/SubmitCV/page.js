@@ -7,7 +7,7 @@ import {
   RESUME_REGISTRY_ABI,
   SUPPORTED_NETWORKS,
 } from '../../constants/contractInfo';
-import { PinataService } from '../../utils/pinataService.js';
+import { PinataService } from '../../utils/pinataService';
 
 export default function UploadResume() {
   const [account, setAccount] = useState(null);
@@ -21,6 +21,7 @@ export default function UploadResume() {
       organization: '',
       title: '',
       time: '',
+      details: '', // Added details field
     },
   });
   const [loading, setLoading] = useState(false);
@@ -44,10 +45,10 @@ export default function UploadResume() {
       setSigner(signer);
       const network = await provider.getNetwork();
       const chainId = '0x' + network.chainId.toString(16);
-      if (chainId === SUPPORTED_NETWORKS.AMOY.chainId) {
-        setNetworkName(SUPPORTED_NETWORKS.AMOY.name);
+      if (chainId === SUPPORTED_NETWORKS.POLYGON.chainId) {
+        setNetworkName(SUPPORTED_NETWORKS.POLYGON.name);
       } else {
-        setError('Please connect to Polygon Amoy testnet');
+        setError('Please connect to Polygon Mainnet');
         return;
       }
       const contract = new ethers.Contract(CONTRACT_ADDRESS, RESUME_REGISTRY_ABI, signer);
@@ -59,27 +60,98 @@ export default function UploadResume() {
     }
   };
 
-  // Submit resume function will be implemented in next commit
   const submitResume = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    setMessage('This functionality will be implemented in the next update');
-    
-    // Placeholder for resume submission logic
-    setTimeout(() => {
+    try {
+      setLoading(true);
+      setError('');
+      if (!contract || !signer) {
+        setError('Please connect your wallet first');
+        setLoading(false);
+        return;
+      }
+      if (!resume.name) {
+        setError('Please enter your name');
+        setLoading(false);
+        return;
+      }
+      const { organization, title, time } = resume.experience;
+      if (!organization || !title || !time) {
+        setError('Please complete all required experience information');
+        setLoading(false);
+        return;
+      }
+
+      // Prepare all data in one object for IPFS
+      setMessage('Preparing resume data...');
+      const combinedData = {
+        address: account, // Include the submitter's address
+        name: resume.name,
+        organization: resume.experience.organization,
+        title: resume.experience.title,
+        time: resume.experience.time,
+        details: resume.experience.details // Added details field (can be empty)
+      };
+      
+      // Upload the data to IPFS - just one upload
+      setMessage('Uploading resume to IPFS...');
+      const { ipfsHash: resumeCID } = await PinataService.uploadResumeToIPFS(combinedData);
+      
+      // Generate a hash for the experience data
+      const expHash = ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(combinedData)));
+      
+      const currentSigner = await provider.getSigner();
+      const contractInstance = new ethers.Contract(CONTRACT_ADDRESS, RESUME_REGISTRY_ABI, currentSigner);
+      setContract(contractInstance);
+
+      // First upload the resume CID
+      const resumeTx = await contractInstance.uploadResume(resumeCID, { gasLimit: 800000 });
+      setMessage('Transaction sent, waiting for confirmation...');
+      await resumeTx.wait();
+      
+      // Then store the experience hash and the same CID
+      try {
+        setMessage('Adding experience to blockchain...');
+        
+        try {
+          await contractInstance.callStatic.addExperience(expHash, resumeCID, { gasLimit: 800000 });
+        } catch (staticErr) {
+          console.warn('Static call warning:', staticErr);
+        }
+
+        const feeData = await provider.getFeeData();
+        const gasPrice = feeData.gasPrice;
+
+        // Use the same CID for both the resume and experience
+        const expTx = await contractInstance.addExperience(expHash, resumeCID, {
+          gasLimit: 1200000,
+          gasPrice: gasPrice
+        });
+        await expTx.wait();
+
+        // Only include the Experience Hash in the success message
+        setMessage(`Resume submitted successfully!
+            Experience Hash: ${expHash}`);
+      } catch (err) {
+        console.error('Error adding experience:', err);
+        setError(err.message || 'Failed to add experience');
+      }
+    } catch (err) {
+      console.error('Error submitting resume:', err);
+      setError(err.message || 'Failed to submit resume');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   useEffect(() => {
     const checkNetwork = async () => {
       if (window.ethereum) {
         const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-        if (chainId === SUPPORTED_NETWORKS.AMOY.chainId) {
-          setNetworkName(SUPPORTED_NETWORKS.AMOY.name);
+        if (chainId === SUPPORTED_NETWORKS.POLYGON.chainId) {
+          setNetworkName(SUPPORTED_NETWORKS.POLYGON.name);
         } else {
-          setError('Please connect to Polygon Amoy testnet');
+          setError('Please connect to Polygon Mainnet');
         }
       }
     };
@@ -157,6 +229,7 @@ export default function UploadResume() {
                       onChange={(e) => setResume({ ...resume, name: e.target.value })}
                       className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
                       placeholder="Enter your name"
+                      required
                   />
                 </div>
 
@@ -170,6 +243,49 @@ export default function UploadResume() {
                       }
                       className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
                       placeholder="e.g. Google, MIT"
+                      required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+                  <input
+                      type="text"
+                      value={resume.experience.title}
+                      onChange={(e) =>
+                          setResume({ ...resume, experience: { ...resume.experience, title: e.target.value } })
+                      }
+                      className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
+                      placeholder="e.g. Software Engineer"
+                      required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period *</label>
+                  <input
+                      type="text"
+                      value={resume.experience.time}
+                      onChange={(e) =>
+                          setResume({ ...resume, experience: { ...resume.experience, time: e.target.value } })
+                      }
+                      className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
+                      placeholder="e.g. 2020-01 to 2022-12"
+                      required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Details <span className="text-gray-500 text-xs">(optional)</span>
+                  </label>
+                  <textarea
+                      value={resume.experience.details}
+                      onChange={(e) =>
+                          setResume({ ...resume, experience: { ...resume.experience, details: e.target.value } })
+                      }
+                      className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white min-h-[120px] resize-y"
+                      placeholder="Additional details about your experience..."
                   />
                 </div>
 
