@@ -16,7 +16,7 @@ export default function Home() {
               Welcome to CVeri
             </h1>
             <p className="text-xl leading-relaxed">
-              A cutting-edge Web3 platform for authenticating resumes and credentials on the blockchain.
+              A Web3 decentralized platform for authenticating resumes and credentials on the blockchain.
             </p>
             <p className="text-md leading-relaxed">
               CVeri empowers individuals and organizations to securely store, verify, and certify professional experiences using Polygon blockchain and IPFS.
