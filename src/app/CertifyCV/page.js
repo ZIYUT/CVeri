@@ -147,7 +147,7 @@ export default function CertifyResume() {
     }, []);
 
     return (
-        <div className="relative isolate overflow-hidden">
+        <>
             <div className="absolute left-[-120px] top-20 h-96 w-96 bg-purple-400 rounded-full opacity-30 blur-3xl animate-pulse z-0" />
             <div className="absolute right-[-120px] bottom-10 h-96 w-96 bg-indigo-400 rounded-full opacity-30 blur-3xl animate-pulse z-0" />
 
@@ -156,7 +156,7 @@ export default function CertifyResume() {
                     <h1 className="text-4xl font-extrabold bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-400 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-300 dark:to-indigo-200">
                         Certify Resume Experience
                     </h1>
-                    <p className="mt-2 text-lg text-gray-600 dark:text-gray-300">
+                    <p className="mt-2 text-lg">
                         Certify verified experiences with your authorized account.
                     </p>
                 </div>
@@ -172,7 +172,7 @@ export default function CertifyResume() {
                     </div>
                 ) : (
                     <div className="mb-6 text-center">
-                        <p className="text-lg text-gray-700 dark:text-gray-300">
+                        <p className="text-lg">
                             Connected: <span className="font-mono text-purple-600">{account}</span>
                         </p>
                         <p className="text-sm text-gray-500">Network: {networkName}</p>
@@ -227,6 +227,6 @@ export default function CertifyResume() {
                     </form>
                 )}
             </div>
-        </div>
+        </>
     );
 }
