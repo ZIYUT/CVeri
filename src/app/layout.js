@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
             </div>
 
             <footer className="py-6 text-center text-gray-500 dark:text-gray-400 text-sm border-t border-gray-200 dark:border-gray-700">
-                <p>Resume Verification System • Admin Dashboard</p>
+                <p>CVeri • Resume Verification System</p>
                 <p className="mt-1">Secured by Blockchain Technology</p>
             </footer>
         </main>

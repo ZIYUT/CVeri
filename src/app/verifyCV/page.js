@@ -91,6 +91,7 @@ export default function VerifyResume() {
 
             if (!cid) {
                 setError('Experience not found');
+                setMessage(''); // Clear the "Retrieving experience details..." message
                 setLoading(false);
                 return;
             }
@@ -110,6 +111,7 @@ export default function VerifyResume() {
         } catch (err) {
             console.error('Error verifying experience:', err);
             setError(err.message || 'Failed to find the experience');
+            setMessage(''); // Clear any previous messages
         } finally {
             setLoading(false);
         }
