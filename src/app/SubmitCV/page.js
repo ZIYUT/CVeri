@@ -131,11 +131,11 @@ export default function UploadResume() {
 
         // Only include the Experience Hash in the success message
         setMessage(`Resume submitted successfully!
-            Experience Hash: ${expHash}`);
+            Experience Hash(Share the hash to your organization for certification): ${expHash}`);
       } catch (err) {
         console.error('Error adding experience:', err);
         setError(err.message || 'Failed to add experience');
-      }
+      }z
     } catch (err) {
       console.error('Error submitting resume:', err);
       setError(err.message || 'Failed to submit resume');
@@ -234,7 +234,7 @@ export default function UploadResume() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Organization *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Organization (Company, School ...) *</label>
                   <input
                       type="text"
                       value={resume.experience.organization}
@@ -248,7 +248,7 @@ export default function UploadResume() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title (Position, Degree...) *</label>
                   <input
                       type="text"
                       value={resume.experience.title}
