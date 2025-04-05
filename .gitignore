@@ -50,3 +50,5 @@ pnpm-debug.log*
 .temp/
 .firebase/
 .vercel/
+
+.env.local/
