@@ -253,7 +253,7 @@ export default function VerifyResume() {
                                         {experienceData.name && <p><strong>Name:</strong> {experienceData.name}</p>}
                                         {experienceData.organization && <p><strong>Organization:</strong> {experienceData.organization}</p>}
                                         {experienceData.title && <p><strong>Title:</strong> {experienceData.title}</p>}
-                                        {experienceData.time && <p><strong>Time:</strong> {experienceData.time}</p>}
+                                        {experienceData.time && <p><strong>Time Period:</strong> {experienceData.time}</p>}
                                         {experienceData.details && (
                                             <div className="mt-2">
                                                 <p><strong>Details:</strong></p>
