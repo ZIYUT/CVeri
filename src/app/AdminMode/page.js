@@ -261,7 +261,7 @@ export default function RegisterCV() {
         <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-purple-600 via-blue-500 to-indigo-400 bg-clip-text text-transparent dark:from-purple-400 dark:via-blue-300 dark:to-indigo-200">
           Resume Verification Admin Panel
         </h1>
-        <p className="mt-3 text-lg text-gray-600 dark:text-gray-300">
+        <p className="mt-3 text-lg">
           Manage certifiers and administrators for the resume verification system
         </p>
       </div>
@@ -297,7 +297,7 @@ export default function RegisterCV() {
             <div className="mt-4">
               <div className="flex items-center">
                 <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">Address:</span>
-                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm flex-1 overflow-hidden text-ellipsis">{account}</span>
+                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm flex-1 overflow-hidden text-ellipsis text-black">{account}</span>
               </div>
               
               {networkName && (
@@ -450,11 +450,6 @@ export default function RegisterCV() {
           </div>
         </div>
       )}
-
-      <div className="mt-16 text-center text-gray-500 dark:text-gray-400 text-sm">
-        <p>Resume Verification System • Admin Dashboard</p>
-        <p className="mt-1">Secured by Blockchain Technology</p>
-      </div>
     </div>
   );
 }
