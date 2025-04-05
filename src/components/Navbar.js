@@ -61,7 +61,7 @@ export default function Navbar() {
 
       {/* Right: Special button + toggle */}
       <div className="flex items-center space-x-4">
-        <Link href="/RegisterCV">
+        <Link href="/AdminMode">
           <button className="px-5 py-2 rounded-full bg-black text-white dark:bg-white dark:text-black font-bold hover:opacity-80 transition">
             Admin Mode
           </button>
