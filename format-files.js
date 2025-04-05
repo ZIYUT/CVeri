@@ -11,18 +11,18 @@ const filePatterns = [
 
 const formatFiles = () => {
   const command = `npx prettier --write "${filePatterns.join('" "')}"`;
-  console.log('运行格式化命令:', command);
+  console.log('Running format command:', command);
 
   exec(command, (error, stdout, stderr) => {
     if (error) {
-      console.error('格式化失败:', error.message);
+      console.error('Formatting failed:', error.message);
       return;
     }
     if (stderr) {
-      console.error('错误输出:', stderr);
+      console.error('Error output:', stderr);
       return;
     }
-    console.log('格式化完成:', stdout);
+    console.log('Formatting complete:', stdout);
   });
 };
 formatFiles();
