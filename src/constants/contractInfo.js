@@ -149,3 +149,12 @@ export const RESUME_REGISTRY_ABI = [
     type: 'function',
   },
 ];
+
+export const SUPPORTED_NETWORKS = {
+  POLYGON: {
+    name: 'Polygon Mainnet',
+    chainId: '0x89', // 137 in decimal
+    rpcUrl: 'https://polygon-rpc.com',
+    blockExplorer: 'https://polygonscan.com'
+  }
+};
