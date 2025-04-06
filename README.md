@@ -1,15 +1,14 @@
-# CVeri —— Resume Verification System
+## CVeri —— Resume Verification System
 
-A decentralized application (DApp) for verifying resume experiences using blockchain technology. This system allows users to submit their resumes and experiences, which are then stored on IPFS and referenced on the blockchain. Authorized certifiers can verify these experiences, adding credibility to users' professional claims.
+CVeri is a decentralized application (DApp) built to combat the widespread issue of resume fraud in today’s job market. By leveraging blockchain technology, CVeri offers a transparent, secure, and efficient way to verify the authenticity of professional experiences. Users can submit their resume data, which is stored on IPFS and referenced on the Polygon Mainnet. Authorized certifiers can validate these experiences, and recruiters can verify claims using immutable blockchain references.
 
-## Introduction
 
-The recruitment process is a critical endeavor for both job seekers and employers. Fresh graduates eagerly submit their resumes to HR departments, hoping for interview opportunities. Meanwhile, HR professionals face the daunting task of reviewing hundreds of resumes containing various experiences and achievements. This often results in either cursory reviews without proper verification or time-consuming validation processes, ultimately reducing opportunities for candidates or decreasing HR efficiency.
+### Introduction
+CVeri was born from the real-world frustration of honest job seekers — including our team — who faced delays due to the inefficiencies of traditional resume verification processes. At the same time, recruiters struggle to verify credentials quickly and accurately amidst high volumes of applications.
 
-Our Resume Verification System leverages blockchain technology to address this challenge. This decentralized solution securely stores verifiable credentials from candidates' resumes, enabling HR departments to quickly validate objective information (academic records, awards, publications, patents, internships) while focusing more attention on subjective qualifications. By streamlining the verification process, the system benefits both employers seeking qualified talent and candidates wanting fair consideration of their credentials.
+Our goal was to streamline this process by building a decentralized verification system where users own their data, certifications are public and tamper-proof, and recruiters can verify claims in seconds. With CVeri, users generate cryptographic experience hashes that can be verified and certified on-chain, solving the pain points of both sides of the hiring table.
 
-Blockchain technology provides an immutable, transparent ledger that ensures data integrity and traceability, making it ideal for credential verification. The system's implementation details are described in subsequent sections of this documentation.
-
+---
 ## Background
 
 ### The Problem
@@ -52,6 +51,7 @@ Since the introduction of Bitcoin in 2009 by Satoshi Nakamoto (marking Blockchai
 
 Our Resume Verification System builds upon these technological advancements to create a trusted ecosystem for credential verification, benefiting all stakeholders in the recruitment process.
 
+---
 ## Implementation
 
 ![Resume Verification System Implementation Framework](public/20250404144220.png)
@@ -59,10 +59,10 @@ Our Resume Verification System builds upon these technological advancements to c
 Our system implementation follows a modern web3 architecture pattern with the following components:
 
 ### Frontend
-The user interface is built using Next.js, a React framework that enables server-side rendering and static site generation for optimal performance. This provides a responsive, user-friendly interface for all stakeholders in the verification process.
+Built with **Next.js** and styled using **Tailwind CSS**, the UI offers a responsive experience. Real-time feedback, role-based access, and animations improve usability.
 
 ### Blockchain Infrastructure
-The decentralized application (DApp) is deployed on the Polygon network using Alchemy's API services. Polygon provides fast and low-cost transactions while maintaining Ethereum compatibility, making it ideal for this verification system. Smart contracts handle the logic for storing verification records, managing certifiers, and controlling access permissions.
+The smart contract is deployed on the **Polygon Mainnet** using **Alchemy**. It manages resume hashes, role permissions, and certification logic, all written in **Solidity**.
 
 ### Data Storage
 Resume data is stored using Pinata's IPFS (InterPlanetary File System) integration, providing truly decentralized and immutable storage. This approach ensures:
@@ -71,37 +71,62 @@ Resume data is stored using Pinata's IPFS (InterPlanetary File System) integrati
 - Reduced dependency on central servers
 - Permanent availability of records
 
+### Wallet Integration
+CVeri uses **MetaMask** for Ethereum wallet access. Network checks and automatic prompts ensure users are connected to Polygon before proceeding.
+
+
 The combination of these technologies creates a robust, scalable system that maintains data integrity while providing a seamless user experience for all participants.
 
+---
 ## Features
 
-- **Submit Resumes**: Users can submit their name and experience details
+- **Submit Resumes**: Users create on-chain resume hashes linked to IPFS data
 - **Blockchain Storage**: All data is securely stored on the Polygon blockchain with content on IPFS
-- **Experience Verification**: Authorized certifiers can verify users' professional experiences
-- **Certification System**: View certification status of any experience using its verification hash
-- **Admin Panel**: Administrators can add new certifiers and admins to the system
-- **MetaMask Integration**: Seamless wallet connection for blockchain transactions
+- **Certify Experiences**: Certifiers approve valid claims using experience hashes
+- **Verify Credentials**: Anyone can verify hash legitimacy and certifications
+- **Admin Panel**: Admins manage certifiers and new admins via a secured panel
+- **Wallet Integration**: Seamless wallet connection for blockchain transactions
 
+---
 ## System Architecture
 
 The application consists of:
 
-1. **Smart Contract**: Deployed on Polygon Mainnet, handles data storage and verification logic
-2. **Frontend**: Next.js application with several main pages:
-    - Submit Resume (`/SubmitCV`)
-    - Verify Experience (`/verifyCV`)
-    - Certify Experience (`/CertifyCV`)
-    - Admin Management (`/AdminMode`)
-3. **IPFS Storage**: Uses Pinata for decentralized content storage
+- **Smart Contract**: Solidity contract on Polygon Mainnet
+- **Frontend**: React (Next.js) web app with dynamic routing and role-aware UI
+- **IPFS Integration**: Decentralized content storage using Pinata
+- **Pages**:
+   - Submit Resume (`/SubmitCV`)
+   - Certify Experience (`/CertifyCV`)
+   - Verify Experience (`/verifyCV`)
+   - Admin Panel (`/AdminMode`)
 
+---
 ## Prerequisites
 
-- Node.js (14.x or higher)
 - MetaMask browser extension
 - Access to Polygon Mainnet
 
+---
 ## Installation
 
+You can get started with CVeri in two ways: **locally** or by accessing the **deployed app on Vercel**.
+
+---
+
+### 🔗 Option 1: Use the Deployed Version on Vercel (Recommended)
+
+No setup required — just visit our live site:
+
+👉 [https://cveri.vercel.app/](https://cveri.vercel.app/)
+
+- Connect your MetaMask wallet
+- Switch to Polygon Mainnet if prompted
+- Begin submitting, certifying, or verifying resumes
+
+---
+
+### 💻 Option 2: Run Locally
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/resume-verification-system.git
@@ -127,6 +152,7 @@ The application consists of:
 
 5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+---
 ## Usage
 
 ### For Users
@@ -158,15 +184,16 @@ The application consists of:
 3. Add new certifiers by entering their wallet address and title/organization
 4. Add new admins by entering their wallet address
 
+
+---
 ## Smart Contract
 
-The system is powered by the `ResumeRegistry` smart contract deployed on the Polygon Amoy testnet. The contract handles:
-
+The **ResumeRegistry** contract on Polygon Mainnet manages:
 - Resume CID storage
-- Experience verification
-- Certifier authorization
-- Admin management
+- Hash-based experience verification
+- Role-based access control (admins/certifiers)
 
+---
 ## Deployment
 
 ### Local Development
@@ -177,14 +204,21 @@ npm run dev
 
 ### Production Deployment
 
-The easiest way to deploy this application is using Vercel:
+The CVeri app is already deployed and accessible at:
 
-1. Push your code to a GitHub repository
-2. Visit [Vercel](https://vercel.com) and import your repository
-3. Configure the environment variables:
-   - `NEXT_PUBLIC_PINATA_API_KEY`
-   - `NEXT_PUBLIC_PINATA_API_SECRET`
-4. Deploy the application
+👉 https://cveri.vercel.app
+
+If you'd like to deploy your own version using Vercel:
+
+1. Fork or push your code to a GitHub repository
+2. Visit https://vercel.com and import your repository
+3. Configure the following environment variables in the Vercel dashboard:
+- NEXT_PUBLIC_PINATA_API_KEY
+- NEXT_PUBLIC_PINATA_API_SECRET
+- NEXT_PUBLIC_CONTRACT_ADDRESS
+4. Click Deploy, and Vercel will build and host your application
+
+You may also choose to deploy using Netlify, AWS Amplify, or traditional hosting services if preferred.
 
 Alternative deployment options include Netlify, AWS Amplify, or traditional hosting services.
 
@@ -195,6 +229,7 @@ Before deploying to production:
 1. **Move Pinata keys to environment variables** - The current implementation has hardcoded API keys in the `pinataService.js` file. These should be moved to environment variables for security.
 2. Ensure your contract address is correctly set in the environment variables
 
+---
 ## Technology Stack
 
 - **Frontend**: Next.js, React, TailwindCSS
@@ -203,6 +238,7 @@ Before deploying to production:
 - **Storage**: IPFS via Pinata
 - **Blockchain**: Polygon Amoy testnet
 
+---
 ## Security Notes
 
 - This application uses MetaMask for transaction signing
@@ -211,6 +247,7 @@ Before deploying to production:
 - Admin functions are protected by onlyAdmin modifiers in the smart contract
 - Certifier functions are restricted to authorized certifiers
 
+---
 ## Code Formatting
 
 This project uses [Prettier](https://prettier.io) to ensure consistent code formatting. The configuration for Prettier is defined in the `.prettierrc` file.
@@ -227,6 +264,7 @@ npx run format
 npx prettier --write .
 ```
 
+---
 ## References
 
 [1] S. Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System," 2009. [Online]. Available: https://bitcoin.org/bitcoin.pdf
@@ -245,10 +283,12 @@ npx prettier --write .
 
 [8] Polygon Technology, "Polygon Amoy Documentation," Polygon Network. [Online]. Available: https://polygon.technology/solutions/polygon-pos
 
+---
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+---
 ## Acknowledgments
 
 - [Next.js](https://nextjs.org/)
