@@ -99,3 +99,160 @@ The application consists of:
 - Node.js (14.x or higher)
 - MetaMask browser extension
 - Access to Polygon Mainnet
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/resume-verification-system.git
+   cd resume-verification-system
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory with the following variables:
+   ```
+   NEXT_PUBLIC_PINATA_API_KEY=your_pinata_api_key
+   NEXT_PUBLIC_PINATA_API_SECRET=your_pinata_api_secret
+   NEXT_PUBLIC_CONTRACT_ADDRESS=0x9241f04634ff89799b0dd96916adb0ca1351a910
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Usage
+
+### For Users
+
+1. Navigate to the Submit Resume page
+2. Connect your MetaMask wallet
+3. Fill in your name and experience details
+4. Submit your information to get a verification hash
+5. Share this hash with potential employers for verification
+
+### For Certifiers
+
+1. Navigate to the Certify Experience page
+2. Connect your MetaMask wallet (must be an authorized certifier)
+3. Enter the experience hash you want to certify
+4. Confirm the transaction to add your certification
+
+### For Verifiers
+
+1. Navigate to the Verify Experience page
+2. Connect your MetaMask wallet
+3. Enter the experience hash to verify
+4. View the experience details and its certifications
+
+### For Admins
+
+1. Navigate to the Admin page
+2. Connect your MetaMask wallet (must be an admin)
+3. Add new certifiers by entering their wallet address and title/organization
+4. Add new admins by entering their wallet address
+
+## Smart Contract
+
+The system is powered by the `ResumeRegistry` smart contract deployed on the Polygon Amoy testnet. The contract handles:
+
+- Resume CID storage
+- Experience verification
+- Certifier authorization
+- Admin management
+
+## Deployment
+
+### Local Development
+
+```bash
+npm run dev
+```
+
+### Production Deployment
+
+The easiest way to deploy this application is using Vercel:
+
+1. Push your code to a GitHub repository
+2. Visit [Vercel](https://vercel.com) and import your repository
+3. Configure the environment variables:
+   - `NEXT_PUBLIC_PINATA_API_KEY`
+   - `NEXT_PUBLIC_PINATA_API_SECRET`
+4. Deploy the application
+
+Alternative deployment options include Netlify, AWS Amplify, or traditional hosting services.
+
+### Important: Environment Variables
+
+Before deploying to production:
+
+1. **Move Pinata keys to environment variables** - The current implementation has hardcoded API keys in the `pinataService.js` file. These should be moved to environment variables for security.
+2. Ensure your contract address is correctly set in the environment variables
+
+## Technology Stack
+
+- **Frontend**: Next.js, React, TailwindCSS
+- **Blockchain Interaction**: ethers.js, Alchemy
+- **Wallet Connection**: MetaMask
+- **Storage**: IPFS via Pinata
+- **Blockchain**: Polygon Amoy testnet
+
+## Security Notes
+
+- This application uses MetaMask for transaction signing
+- All blockchain transactions require user confirmation
+- Experience data is stored on IPFS with references on the blockchain
+- Admin functions are protected by onlyAdmin modifiers in the smart contract
+- Certifier functions are restricted to authorized certifiers
+
+## Code Formatting
+
+This project uses [Prettier](https://prettier.io) to ensure consistent code formatting. The configuration for Prettier is defined in the `.prettierrc` file.
+
+A helper script named `format-files.js` is provided to format source files. It targets JavaScript, TypeScript, JSX, TSX, and JSON files under the `src` directory.
+
+### How to Format Files
+
+You can format your files in one of the following ways:
+
+```bash
+npx run format
+# or
+npx prettier --write .
+```
+
+## References
+
+[1] S. Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System," 2009. [Online]. Available: https://bitcoin.org/bitcoin.pdf
+
+[2] V. Buterin et al., "Ethereum: A Next-Generation Smart Contract and Decentralized Application Platform," 2014. [Online]. Available: https://ethereum.org/en/whitepaper/
+
+[3] "Resume Authenticity Survey Results," BBS for Fresh Graduates (应届生论坛), 2020. [Online survey].
+
+[4] L. Wang and J. Zhang, "The Relationship Between Awareness of Resume Fraud and Personal Misrepresentation Behavior," Journal of Employment Ethics, vol. 16, no. 3, pp. 122-138, 2021.
+
+[5] S. Chen, X. Li, and Y. Wang, "Attitudes Toward Resume Fraud Among Job Seekers," International Journal of Human Resource Management, vol. 28, no. 4, pp. 673-691, 2019.
+
+[6] IBM, "Hyperledger Fabric Documentation," IBM Blockchain Platform. [Online]. Available: https://www.ibm.com/blockchain/hyperledger
+
+[7] K. Lee, "The Future of Recruitment: Authentic Credentials and AI," AI Superpowers Conference, Beijing, 2018.
+
+[8] Polygon Technology, "Polygon Amoy Documentation," Polygon Network. [Online]. Available: https://polygon.technology/solutions/polygon-pos
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Acknowledgments
+
+- [Next.js](https://nextjs.org/)
+- [ethers.js](https://docs.ethers.io)
+- [IPFS](https://ipfs.io/)
+- [Pinata](https://pinata.cloud/)
+- [Polygon](https://polygon.technology/)
