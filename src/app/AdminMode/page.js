@@ -371,7 +371,7 @@ export default function RegisterCV() {
                 />
               </div>
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Title/Organization</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Name</label>
                 <input
                   type="text"
                   value={certifierTitle}
