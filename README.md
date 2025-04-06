@@ -211,17 +211,11 @@ The CVeri app is already deployed and accessible at:
 If you'd like to deploy your own version using Vercel:
 
 1. Fork or push your code to a GitHub repository
-
 2. Visit https://vercel.com and import your repository
-
 3. Configure the following environment variables in the Vercel dashboard:
-
-  - NEXT_PUBLIC_PINATA_API_KEY
-
+- NEXT_PUBLIC_PINATA_API_KEY
 - NEXT_PUBLIC_PINATA_API_SECRET
-
 - NEXT_PUBLIC_CONTRACT_ADDRESS
-
 4. Click Deploy, and Vercel will build and host your application
 
 You may also choose to deploy using Netlify, AWS Amplify, or traditional hosting services if preferred.
@@ -235,6 +229,7 @@ Before deploying to production:
 1. **Move Pinata keys to environment variables** - The current implementation has hardcoded API keys in the `pinataService.js` file. These should be moved to environment variables for security.
 2. Ensure your contract address is correctly set in the environment variables
 
+---
 ## Technology Stack
 
 - **Frontend**: Next.js, React, TailwindCSS
@@ -243,6 +238,7 @@ Before deploying to production:
 - **Storage**: IPFS via Pinata
 - **Blockchain**: Polygon Amoy testnet
 
+---
 ## Security Notes
 
 - This application uses MetaMask for transaction signing
@@ -251,6 +247,7 @@ Before deploying to production:
 - Admin functions are protected by onlyAdmin modifiers in the smart contract
 - Certifier functions are restricted to authorized certifiers
 
+---
 ## Code Formatting
 
 This project uses [Prettier](https://prettier.io) to ensure consistent code formatting. The configuration for Prettier is defined in the `.prettierrc` file.
@@ -267,6 +264,7 @@ npx run format
 npx prettier --write .
 ```
 
+---
 ## References
 
 [1] S. Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System," 2009. [Online]. Available: https://bitcoin.org/bitcoin.pdf
@@ -285,10 +283,12 @@ npx prettier --write .
 
 [8] Polygon Technology, "Polygon Amoy Documentation," Polygon Network. [Online]. Available: https://polygon.technology/solutions/polygon-pos
 
+---
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
+---
 ## Acknowledgments
 
 - [Next.js](https://nextjs.org/)
