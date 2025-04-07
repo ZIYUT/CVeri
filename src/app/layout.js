@@ -1,5 +1,6 @@
 import './globals.css';
 import Navbar from '../components/Navbar';
+import { Analytics } from '@vercel/analytics/next';
 
 export const metadata = {
     title: 'Resume DApp',
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
                 <p className="mt-1">Secured by Blockchain Technology</p>
             </footer>
         </main>
+            <Analytics />
         </body>
         </html>
     );

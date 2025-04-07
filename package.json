@@ -10,6 +10,7 @@
     "format": "node \"format-files.js\""
   },
   "dependencies": {
+    "@vercel/analytics": "^1.5.0",
     "axios": "^1.8.4",
     "ethers": "^6.13.5",
     "ipfs-http-client": "^60.0.1",
