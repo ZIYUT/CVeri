@@ -1,6 +1,7 @@
 import './globals.css';
 import Navbar from '../components/Navbar';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata = {
     title: 'Resume DApp',
@@ -29,6 +30,7 @@ export default function RootLayout({ children }) {
             </footer>
         </main>
             <Analytics />
+            <SpeedInsights />
         </body>
         </html>
     );
