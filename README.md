@@ -2,6 +2,10 @@
 
 CVeri is a decentralized application (DApp) built to combat the widespread issue of resume fraud in today’s job market. By leveraging blockchain technology, CVeri offers a transparent, secure, and efficient way to verify the authenticity of professional experiences. Users can submit their resume data, which is stored on IPFS and referenced on the Polygon Mainnet. Authorized certifiers can validate these experiences, and recruiters can verify claims using immutable blockchain references.
 
+know more about CVeri by this Video:
+
+[![Watch the video](https://img.youtube.com/vi/igbxAO8-L0k/maxresdefault.jpg)](https://www.youtube.com/watch?v=igbxAO8-L0k)
+
 
 ### Introduction
 CVeri was born from the real-world frustration of honest job seekers — including our team — who faced delays due to the inefficiencies of traditional resume verification processes. At the same time, recruiters struggle to verify credentials quickly and accurately amidst high volumes of applications.
