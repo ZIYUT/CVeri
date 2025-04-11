@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
 import {
   CONTRACT_ADDRESS,
   RESUME_REGISTRY_ABI,
@@ -27,6 +29,10 @@ export default function UploadResume() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [experienceHash, setExperienceHash] = useState('');
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
+  const [isCurrentPosition, setIsCurrentPosition] = useState(false);
 
   const connectWallet = async () => {
     try {
@@ -65,6 +71,7 @@ export default function UploadResume() {
     try {
       setLoading(true);
       setError('');
+      setExperienceHash(''); // Reset hash on new submission
       if (!contract || !signer) {
         setError('Please connect your wallet first');
         setLoading(false);
@@ -123,7 +130,8 @@ export default function UploadResume() {
         });
         await expTx.wait();
 
-        setMessage(`Resume submitted successfully!\nExperience Hash(Share the hash to your organization for certification): ${expHash}`);
+        setExperienceHash(expHash);
+        setMessage('Resume submitted successfully! Please record your Hash blow(IMPORTANT!!!)');
       } catch (err) {
         console.error('Error adding experience:', err);
         setError(err.message || 'Failed to add experience');
@@ -134,6 +142,18 @@ export default function UploadResume() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const copyHashToClipboard = () => {
+    navigator.clipboard.writeText(experienceHash)
+      .then(() => {
+        const originalMessage = message;
+        setMessage('Hash copied to clipboard!');
+        setTimeout(() => setMessage(originalMessage), 2000);
+      })
+      .catch(err => {
+        console.error('Failed to copy:', err);
+      });
   };
 
   useEffect(() => {
@@ -168,6 +188,26 @@ export default function UploadResume() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const formatDate = (date) => {
+      if (!date) return '';
+      return date.toISOString().split('T')[0]; // YYYY-MM-DD format
+    };
+    
+    let timeString = '';
+    if (startDate) {
+      timeString = `${formatDate(startDate)} to ${isCurrentPosition ? 'Now' : formatDate(endDate) || ''}`;
+    }
+    
+    setResume(prev => ({
+      ...prev, 
+      experience: {
+        ...prev.experience,
+        time: timeString.trim()
+      }
+    }));
+  }, [startDate, endDate, isCurrentPosition]);
 
   return (
       <>
@@ -208,6 +248,21 @@ export default function UploadResume() {
           {message && (
               <div className="bg-green-100 text-green-800 px-4 py-3 rounded mb-4 text-center whitespace-pre-wrap">
                 {message}
+                
+                {experienceHash && (
+                  <div className="mt-3 flex items-center justify-center">
+                    <div className="bg-gray-100 text-gray-800 px-3 py-1 rounded-l border border-gray-300 overflow-hidden overflow-ellipsis max-w-[80%] font-mono">
+                      {experienceHash}
+                    </div>
+                    <button 
+                      onClick={copyHashToClipboard}
+                      className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-r border-t border-r border-b border-blue-600"
+                      title="Copy to clipboard"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                )}
               </div>
           )}
 
@@ -255,16 +310,51 @@ export default function UploadResume() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Time Period *</label>
-                  <input
-                      type="text"
-                      value={resume.experience.time}
-                      onChange={(e) =>
-                          setResume({ ...resume, experience: { ...resume.experience, time: e.target.value } })
-                      }
-                      className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
-                      placeholder="e.g. 2020-01 to 2022-12"
-                      required
-                  />
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex-1">
+                      <label className="block text-xs text-gray-500 mb-1">Start Date</label>
+                      <DatePicker
+                        selected={startDate}
+                        onChange={date => setStartDate(date)}
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Select start date"
+                        className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
+                        required
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-xs text-gray-500 mb-1">End Date</label>
+                      <DatePicker
+                        selected={endDate}
+                        onChange={date => setEndDate(date)}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        dateFormat="yyyy-MM-dd"
+                        placeholderText="Select end date"
+                        className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
+                        disabled={isCurrentPosition}
+                        required={!isCurrentPosition}
+                      />
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <label className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={isCurrentPosition}
+                        onChange={() => {
+                          setIsCurrentPosition(!isCurrentPosition);
+                          if (!isCurrentPosition) setEndDate(null);
+                        }}
+                        className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
+                      />
+                      <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">This is my current position</span>
+                    </label>
+                  </div>
                 </div>
 
                 <div>

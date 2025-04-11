@@ -111,7 +111,7 @@ export default function VerifyResume() {
         } catch (err) {
             console.error('Error verifying experience:', err);
             setError(err.message || 'Failed to find the experience');
-            setMessage(''); // Clear any previous messages
+            setMessage(''); 
         } finally {
             setLoading(false);
         }
@@ -225,14 +225,36 @@ export default function VerifyResume() {
                                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                     Experience Hash
                                 </label>
-                                <input
-                                    type="text"
-                                    value={experienceHash}
-                                    onChange={(e) => setExperienceHash(e.target.value)}
-                                    placeholder="0x..."
-                                    className="w-full px-4 py-2 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
-                                    required
-                                />
+                                <div className="flex">
+                                    <input
+                                        type="text"
+                                        value={experienceHash}
+                                        onChange={(e) => setExperienceHash(e.target.value)}
+                                        placeholder="0x..."
+                                        className="flex-grow px-4 py-2 rounded-l border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-black dark:text-white"
+                                        required
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            navigator.clipboard.readText()
+                                                .then(text => {
+                                                    setExperienceHash(text);
+                                                    setMessage("Hash pasted from clipboard");
+                                                    setTimeout(() => setMessage(""), 2000);
+                                                })
+                                                .catch(err => {
+                                                    console.error('Failed to read clipboard:', err);
+                                                    setError('Could not access clipboard. Please paste manually.');
+                                                    setTimeout(() => setError(""), 3000);
+                                                });
+                                        }}
+                                        className="px-3 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-600 dark:hover:bg-gray-500 text-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-r transition-colors"
+                                        title="Paste from clipboard"
+                                    >
+                                        📋 Paste
+                                    </button>
+                                </div>
                             </div>
                             <button
                                 type="submit"
