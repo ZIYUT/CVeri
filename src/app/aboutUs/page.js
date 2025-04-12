@@ -64,7 +64,7 @@ export default function AboutUs() {
             </div>
             
             <div>
-              <p className="font-medium text-gray-800 dark:text-gray-200">Lingyue:</p>
+              <p className="font-medium text-gray-800 dark:text-gray-200">Lingyue Zhuo:</p>
               <p className="text-gray-600 dark:text-gray-300">
                 <span className="inline-block w-20">LinkedIn:</span> 
                 <a href="https://www.linkedin.com/in/dylanzhuo/" className="text-blue-600 dark:text-blue-400 hover:underline">linkedin.com/in/dylanzhuo/</a>
