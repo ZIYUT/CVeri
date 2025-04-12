@@ -57,6 +57,12 @@ export default function Navbar() {
         >
           Certify Resume
         </Link>
+        <Link
+          href="/aboutUs"
+          className="hover:text-purple-600 dark:hover:text-purple-400 transition"
+        >
+          About Us
+        </Link>
       </div>
 
       {/* Right: Special button + toggle */}
