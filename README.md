@@ -237,7 +237,6 @@ If you'd like to deploy your own version using Vercel:
 
 - NEXT_PUBLIC_PINATA_API_KEY
 - NEXT_PUBLIC_PINATA_API_SECRET
-- NEXT_PUBLIC_CONTRACT_ADDRESS
 
 4. Click Deploy, and Vercel will build and host your application
 
