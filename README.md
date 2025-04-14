@@ -160,7 +160,6 @@ No setup required — just visit our live site:
    ```
    NEXT_PUBLIC_PINATA_API_KEY=your_pinata_api_key
    NEXT_PUBLIC_PINATA_API_SECRET=your_pinata_api_secret
-   NEXT_PUBLIC_CONTRACT_ADDRESS=0x9241f04634ff89799b0dd96916adb0ca1351a910
    ```
 
 4. Start the development server:
