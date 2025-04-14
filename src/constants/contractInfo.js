@@ -155,6 +155,6 @@ export const SUPPORTED_NETWORKS = {
     name: 'Polygon Mainnet',
     chainId: '0x89',
     rpcUrl: 'https://polygon-rpc.com',
-    blockExplorer: 'https://polygonscan.com'
-  }
+    blockExplorer: 'https://polygonscan.com',
+  },
 };

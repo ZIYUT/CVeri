@@ -3,21 +3,25 @@ import { ethers } from 'ethers';
 
 export class PinataService {
   /**
-   * 
-   * @param {Object} resumeData 
+   *
+   * @param {Object} resumeData
    * @returns {Promise<{ipfsHash: string}>} - IPFS hash of the uploaded resume
    */
   static async uploadResumeToIPFS(resumeData) {
     try {
       const apiKey = process.env.NEXT_PUBLIC_PINATA_API_KEY;
       const apiSecret = process.env.NEXT_PUBLIC_PINATA_API_SECRET;
-      
+
       // Check API keys
       if (!apiKey || !apiSecret) {
-        console.error("API Keys:", apiKey ? "Key exists" : "No key", apiSecret ? "Secret exists" : "No secret");
+        console.error(
+          'API Keys:',
+          apiKey ? 'Key exists' : 'No key',
+          apiSecret ? 'Secret exists' : 'No secret'
+        );
         throw new Error('Pinata API keys not found in environment variables');
       }
-        // Check resumeData
+      // Check resumeData
       const data = {
         ...resumeData,
         timestamp: new Date().toISOString(),

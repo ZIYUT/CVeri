@@ -18,11 +18,11 @@ export default function RegisterCV() {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [networkName, setNetworkName] = useState('');
-  
+
   // Certifier management state
   const [certifierAddress, setCertifierAddress] = useState('');
   const [certifierTitle, setCertifierTitle] = useState('');
-  
+
   // Admin management state
   const [adminAddress, setAdminAddress] = useState('');
 
@@ -111,7 +111,7 @@ export default function RegisterCV() {
 
       const isAdmin = await contract.admins(account);
       setIsAdmin(isAdmin);
-      
+
       setMessage(`Wallet connected: ${account}`);
     } catch (err) {
       console.error('Error connecting wallet:', err);
@@ -121,7 +121,7 @@ export default function RegisterCV() {
 
   const addCertifier = async (e) => {
     if (e) e.preventDefault();
-    
+
     if (!certifierAddress) {
       setError('Please enter a certifier address');
       return;
@@ -131,12 +131,12 @@ export default function RegisterCV() {
       setError('Please enter a title for the certifier');
       return;
     }
-    
+
     try {
       setLoading(true);
       setError('');
       setMessage('');
-      
+
       if (!ethers.isAddress(certifierAddress)) {
         setError('Invalid Ethereum address');
         setLoading(false);
@@ -144,15 +144,14 @@ export default function RegisterCV() {
       }
 
       setMessage('Adding certifier to blockchain...');
-      
+
       const tx = await contract.addCertifier(certifierAddress, certifierTitle);
       setMessage('Transaction sent! Waiting for confirmation...');
-      
+
       await tx.wait();
       setMessage(`Certifier ${certifierAddress} (${certifierTitle}) added successfully!`);
       setCertifierAddress('');
       setCertifierTitle('');
-      
     } catch (err) {
       console.error('Error adding certifier:', err);
       setError(err.message || 'Failed to add certifier');
@@ -163,17 +162,17 @@ export default function RegisterCV() {
 
   const addAdmin = async (e) => {
     if (e) e.preventDefault();
-    
+
     if (!adminAddress) {
       setError('Please enter an admin address');
       return;
     }
-    
+
     try {
       setLoading(true);
       setError('');
       setMessage('');
-      
+
       if (!ethers.isAddress(adminAddress)) {
         setError('Invalid Ethereum address');
         setLoading(false);
@@ -186,14 +185,14 @@ export default function RegisterCV() {
         setLoading(false);
         return;
       }
-      
+
       setMessage('Adding admin to blockchain...');
-      
-      const tx = await contract.addAdmin(adminAddress, { 
-        gasLimit: 200000
+
+      const tx = await contract.addAdmin(adminAddress, {
+        gasLimit: 200000,
       });
       setMessage('Transaction sent! Waiting for confirmation...');
-      
+
       await tx.wait();
       setMessage(`Admin ${adminAddress} added successfully!`);
       setAdminAddress('');
@@ -219,7 +218,7 @@ export default function RegisterCV() {
     };
 
     checkNetwork();
-    
+
     const checkConnection = async () => {
       if (window.ethereum) {
         const accounts = await window.ethereum.request({ method: 'eth_accounts' });
@@ -230,7 +229,7 @@ export default function RegisterCV() {
     };
 
     checkConnection();
-    
+
     if (window.ethereum) {
       window.ethereum.on('accountsChanged', (accounts) => {
         if (accounts.length > 0) {
@@ -246,7 +245,7 @@ export default function RegisterCV() {
         window.location.reload();
       });
     }
-    
+
     return () => {
       if (window.ethereum) {
         window.ethereum.removeListener('accountsChanged', () => {});
@@ -285,25 +284,35 @@ export default function RegisterCV() {
                   Account and network information
                 </p>
               </div>
-              <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                isAdmin ? 
-                'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-              }`}>
+              <div
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  isAdmin
+                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                    : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                }`}
+              >
                 {isAdmin ? 'Admin' : 'Not Admin'}
               </div>
             </div>
-            
+
             <div className="mt-4">
               <div className="flex items-center">
-                <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">Address:</span>
-                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm flex-1 overflow-hidden text-ellipsis text-black">{account}</span>
+                <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">
+                  Address:
+                </span>
+                <span className="font-mono bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-sm flex-1 overflow-hidden text-ellipsis text-black">
+                  {account}
+                </span>
               </div>
-              
+
               {networkName && (
                 <div className="flex items-center mt-2">
-                  <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">Network:</span>
-                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-sm">{networkName}</span>
+                  <span className="text-gray-600 dark:text-gray-400 text-sm font-medium w-24">
+                    Network:
+                  </span>
+                  <span className="bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded text-sm">
+                    {networkName}
+                  </span>
                 </div>
               )}
             </div>
@@ -315,8 +324,17 @@ export default function RegisterCV() {
         <div className="mb-6 bg-red-50 dark:bg-red-900/30 border-l-4 border-red-500 p-4 rounded-r-lg animate-fadeIn">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              <svg
+                className="h-5 w-5 text-red-500"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
@@ -340,12 +358,23 @@ export default function RegisterCV() {
         <div className="mb-6 bg-green-50 dark:bg-green-900/30 border-l-4 border-green-500 p-4 rounded-r-lg animate-fadeIn">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-5 w-5 text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              <svg
+                className="h-5 w-5 text-green-500"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
               </svg>
             </div>
             <div className="ml-3">
-              <div className="text-sm text-green-700 dark:text-green-200 whitespace-pre-line">{message}</div>
+              <div className="text-sm text-green-700 dark:text-green-200 whitespace-pre-line">
+                {message}
+              </div>
             </div>
           </div>
         </div>
@@ -360,7 +389,9 @@ export default function RegisterCV() {
             </div>
             <form onSubmit={addCertifier} className="p-6">
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Certifier Address
+                </label>
                 <input
                   type="text"
                   value={certifierAddress}
@@ -371,7 +402,9 @@ export default function RegisterCV() {
                 />
               </div>
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Certifier Name</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Certifier Name
+                </label>
                 <input
                   type="text"
                   value={certifierTitle}
@@ -398,11 +431,15 @@ export default function RegisterCV() {
           <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-300 hover:shadow-xl">
             <div className="bg-gradient-to-r from-purple-500 to-purple-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white">Add Admin</h2>
-              <p className="text-purple-100 text-sm">Grant administrator privileges to a new address</p>
+              <p className="text-purple-100 text-sm">
+                Grant administrator privileges to a new address
+              </p>
             </div>
             <form onSubmit={addAdmin} className="p-6">
               <div className="mb-5">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Admin Address</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Admin Address
+                </label>
                 <input
                   type="text"
                   value={adminAddress}
@@ -432,17 +469,34 @@ export default function RegisterCV() {
         <div className="mt-8 bg-yellow-50 dark:bg-yellow-900/20 border-l-4 border-yellow-400 p-6 rounded-lg animate-fadeIn">
           <div className="flex">
             <div className="flex-shrink-0">
-              <svg className="h-6 w-6 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              <svg
+                className="h-6 w-6 text-yellow-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
               </svg>
             </div>
             <div className="ml-4">
-              <h3 className="text-xl font-medium text-yellow-800 dark:text-yellow-300">Admin Access Required</h3>
+              <h3 className="text-xl font-medium text-yellow-800 dark:text-yellow-300">
+                Admin Access Required
+              </h3>
               <p className="mt-2 text-yellow-700 dark:text-yellow-200">
-                Only administrators can manage certifiers and add new admins. Please connect with an authorized admin wallet address to access these features.
+                Only administrators can manage certifiers and add new admins. Please connect with an
+                authorized admin wallet address to access these features.
               </p>
               <div className="mt-4">
-                <a href="/" className="text-yellow-800 dark:text-yellow-300 underline hover:text-yellow-900 dark:hover:text-yellow-200 font-medium transition">
+                <a
+                  href="/"
+                  className="text-yellow-800 dark:text-yellow-300 underline hover:text-yellow-900 dark:hover:text-yellow-200 font-medium transition"
+                >
                   Return to Homepage
                 </a>
               </div>

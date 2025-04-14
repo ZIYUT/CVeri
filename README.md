@@ -2,18 +2,18 @@
 
 CVeri is a decentralized application (DApp) built to combat the widespread issue of resume fraud in today’s job market. By leveraging blockchain technology, CVeri offers a transparent, secure, and efficient way to verify the authenticity of professional experiences. Users can submit their resume data, which is stored on IPFS and referenced on the Polygon Mainnet. Authorized certifiers can validate these experiences, and recruiters can verify claims using immutable blockchain references.
 
-
 #### Know more about CVeri by the video below:
 
 [![Watch the video](https://img.youtube.com/vi/igbxAO8-L0k/maxresdefault.jpg)](https://www.youtube.com/watch?v=igbxAO8-L0k)
 
-
 ### Introduction
+
 CVeri was born from the real-world frustration of honest job seekers — including our team — who faced delays due to the inefficiencies of traditional resume verification processes. At the same time, recruiters struggle to verify credentials quickly and accurately amidst high volumes of applications.
 
 Our goal was to streamline this process by building a decentralized verification system where users own their data, certifications are public and tamper-proof, and recruiters can verify claims in seconds. With CVeri, users generate cryptographic experience hashes that can be verified and certified on-chain, solving the pain points of both sides of the hiring table.
 
 ---
+
 ## Background
 
 ### The Problem
@@ -57,6 +57,7 @@ Since the introduction of Bitcoin in 2009 by Satoshi Nakamoto (marking Blockchai
 Our Resume Verification System builds upon these technological advancements to create a trusted ecosystem for credential verification, benefiting all stakeholders in the recruitment process.
 
 ---
+
 ## Implementation
 
 ![Resume Verification System Implementation Framework](public/20250404144220.png)
@@ -64,25 +65,30 @@ Our Resume Verification System builds upon these technological advancements to c
 Our system implementation follows a modern web3 architecture pattern with the following components:
 
 ### Frontend
+
 Built with **Next.js** and styled using **Tailwind CSS**, the UI offers a responsive experience. Real-time feedback, role-based access, and animations improve usability.
 
 ### Blockchain Infrastructure
+
 The smart contract is deployed on the **Polygon Mainnet** using **Alchemy**. It manages resume hashes, role permissions, and certification logic, all written in **Solidity**.
 
 ### Data Storage
+
 Resume data is stored using Pinata's IPFS (InterPlanetary File System) integration, providing truly decentralized and immutable storage. This approach ensures:
+
 - Content addressing rather than location addressing
 - Resistance to censorship
 - Reduced dependency on central servers
 - Permanent availability of records
 
 ### Wallet Integration
-CVeri uses **MetaMask** for Ethereum wallet access. Network checks and automatic prompts ensure users are connected to Polygon before proceeding.
 
+CVeri uses **MetaMask** for Ethereum wallet access. Network checks and automatic prompts ensure users are connected to Polygon before proceeding.
 
 The combination of these technologies creates a robust, scalable system that maintains data integrity while providing a seamless user experience for all participants.
 
 ---
+
 ## Features
 
 - **Submit Resumes**: Users create on-chain resume hashes linked to IPFS data
@@ -93,6 +99,7 @@ The combination of these technologies creates a robust, scalable system that mai
 - **Wallet Integration**: Seamless wallet connection for blockchain transactions
 
 ---
+
 ## System Architecture
 
 The application consists of:
@@ -101,18 +108,20 @@ The application consists of:
 - **Frontend**: React (Next.js) web app with dynamic routing and role-aware UI
 - **IPFS Integration**: Decentralized content storage using Pinata
 - **Pages**:
-   - Submit Resume (`/SubmitCV`)
-   - Certify Experience (`/CertifyCV`)
-   - Verify Experience (`/verifyCV`)
-   - Admin Panel (`/AdminMode`)
+  - Submit Resume (`/SubmitCV`)
+  - Certify Experience (`/CertifyCV`)
+  - Verify Experience (`/verifyCV`)
+  - Admin Panel (`/AdminMode`)
 
 ---
+
 ## Prerequisites
 
 - MetaMask browser extension
 - Access to Polygon Mainnet
 
 ---
+
 ## Installation
 
 You can get started with CVeri in two ways: **locally** or by accessing the **deployed app on Vercel**.
@@ -132,18 +141,22 @@ No setup required — just visit our live site:
 ---
 
 ### 💻 Option 2: Run Locally
+
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/yourusername/resume-verification-system.git
    cd resume-verification-system
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env.local` file in the root directory with the following variables:
+
    ```
    NEXT_PUBLIC_PINATA_API_KEY=your_pinata_api_key
    NEXT_PUBLIC_PINATA_API_SECRET=your_pinata_api_secret
@@ -151,6 +164,7 @@ No setup required — just visit our live site:
    ```
 
 4. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -158,6 +172,7 @@ No setup required — just visit our live site:
 5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ---
+
 ## Usage
 
 ### For Users
@@ -189,16 +204,18 @@ No setup required — just visit our live site:
 3. Add new certifiers by entering their wallet address and title/organization
 4. Add new admins by entering their wallet address
 
-
 ---
+
 ## Smart Contract
 
 The **ResumeRegistry** contract on Polygon Mainnet manages:
+
 - Resume CID storage
 - Hash-based experience verification
 - Role-based access control (admins/certifiers)
 
 ---
+
 ## Deployment
 
 ### Local Development
@@ -218,9 +235,11 @@ If you'd like to deploy your own version using Vercel:
 1. Fork or push your code to a GitHub repository
 2. Visit https://vercel.com and import your repository
 3. Configure the following environment variables in the Vercel dashboard:
+
 - NEXT_PUBLIC_PINATA_API_KEY
 - NEXT_PUBLIC_PINATA_API_SECRET
 - NEXT_PUBLIC_CONTRACT_ADDRESS
+
 4. Click Deploy, and Vercel will build and host your application
 
 You may also choose to deploy using Netlify, AWS Amplify, or traditional hosting services if preferred.
@@ -235,6 +254,7 @@ Before deploying to production:
 2. Ensure your contract address is correctly set in the environment variables
 
 ---
+
 ## Technology Stack
 
 - **Frontend**: Next.js, React, TailwindCSS
@@ -244,6 +264,7 @@ Before deploying to production:
 - **Blockchain**: Polygon Amoy testnet
 
 ---
+
 ## Security Notes
 
 - This application uses MetaMask for transaction signing
@@ -253,6 +274,7 @@ Before deploying to production:
 - Certifier functions are restricted to authorized certifiers
 
 ---
+
 ## Code Formatting
 
 This project uses [Prettier](https://prettier.io) to ensure consistent code formatting. The configuration for Prettier is defined in the `.prettierrc` file.
@@ -270,6 +292,7 @@ npx prettier --write .
 ```
 
 ---
+
 ## References
 
 [1] S. Nakamoto, "Bitcoin: A Peer-to-Peer Electronic Cash System," 2009. [Online]. Available: https://bitcoin.org/bitcoin.pdf
@@ -289,11 +312,13 @@ npx prettier --write .
 [8] Polygon Technology, "Polygon Amoy Documentation," Polygon Network. [Online]. Available: https://polygon.technology/solutions/polygon-pos
 
 ---
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 ---
+
 ## Acknowledgments
 
 - [Next.js](https://nextjs.org/)
